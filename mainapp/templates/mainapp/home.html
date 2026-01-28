@@ -1,0 +1,136 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}Home - Library Hub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header-section">
+        <h1><i class="fas fa-book-reader"></i> Welcome to Library Hub</h1>
+        <p>Discover and explore our collection of amazing books and authors</p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="stats-box">
+                <i class="fas fa-book" style="font-size: 2.5rem; margin-bottom: 10px;"></i>
+                <div class="stat-number">{{ total_books }}</div>
+                <div>Total Books</div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stats-box">
+                <i class="fas fa-folder-open" style="font-size: 2.5rem; margin-bottom: 10px;"></i>
+                <div class="stat-number">{{ total_categories }}</div>
+                <div>Categories</div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stats-box">
+                <i class="fas fa-user-tie" style="font-size: 2.5rem; margin-bottom: 10px;"></i>
+                <div class="stat-number">{{ total_authors }}</div>
+                <div>Authors</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Books -->
+    <div class="mb-5">
+        <h2 class="mb-4" style="color: white; font-weight: 700;">
+            <i class="fas fa-star"></i> Featured Books
+        </h2>
+        <div class="row">
+            {% for book in books %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card">
+                        <div class="book-cover">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ book.title }}</h5>
+                            <div class="author-badge mb-3">
+                                <i class="fas fa-pen-fancy"></i> {{ book.author.name }}
+                            </div>
+                            {% if book.description %}
+                                <p class="card-text text-truncate-3" style="color: #555; font-size: 0.95rem;">{{ book.description }}</p>
+                            {% endif %}
+                            <div class="tag-cloud">
+                                {% for category in book.categories.all %}
+                                    <span class="badge-custom">{{ category.name }}</span>
+                                {% endfor %}
+                            </div>
+                            <div class="mt-3 d-flex justify-content-between align-items-center">
+                                <small style="color: #7f8c8d;">
+                                    <i class="fas fa-calendar"></i> {{ book.published|date:"Y" }}
+                                </small>
+                                <a href="{% url 'book_detail' book.pk %}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-info-circle"></i> View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-inbox"></i> No books available yet. Visit the admin panel to add some!
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Categories Overview -->
+    <div class="mb-5">
+        <h2 class="mb-4" style="color: white; font-weight: 700;">
+            <i class="fas fa-layer-group"></i> Browse Categories
+        </h2>
+        <div class="row">
+            {% for category in categories %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-center">
+                        <div class="category-icon">
+                            <i class="fas fa-bookmark"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ category.name }}</h5>
+                            {% if category.description %}
+                                <p class="card-text text-truncate-2" style="color: #555;">{{ category.description }}</p>
+                            {% endif %}
+                            <p style="color: #7f8c8d; font-weight: 600;">
+                                <i class="fas fa-book"></i> {{ category.books.count }} books
+                            </p>
+                            <a href="{% url 'category_detail' category.pk %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-search"></i> Explore
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-inbox"></i> No categories available yet.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(231, 76, 60, 0.1)); border: 2px solid var(--accent-color);">
+                <div class="card-body text-center py-5">
+                    <h5 class="card-title" style="color: var(--primary-color); margin-bottom: 25px;">Need to manage the library?</h5>
+                    <a href="{% url 'admin:index' %}" class="btn btn-primary me-3">
+                        <i class="fas fa-lock"></i> Go to Admin Panel
+                    </a>
+                    <a href="{% url 'books_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-list"></i> View All Books
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

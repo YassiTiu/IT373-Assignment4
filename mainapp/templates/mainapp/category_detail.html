@@ -1,0 +1,117 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}{{ category.name }} - Library Hub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <a href="{% url 'categories_list' %}" class="btn btn-outline-light mb-4" style="border-color: white;">
+        <i class="fas fa-arrow-left"></i> Back to Categories
+    </a>
+
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card" style="background: linear-gradient(135deg, var(--accent-color), var(--secondary-color)); color: white; border: none;">
+                <div class="card-body text-center" style="padding: 50px 20px;">
+                    <i class="fas fa-bookmark" style="font-size: 4rem; margin-bottom: 20px;"></i>
+                    <h2 class="card-title" style="color: white; margin-bottom: 20px;">{{ category.name }}</h2>
+                    <p style="font-size: 1.2rem; margin-bottom: 0;">
+                        <strong>{{ books.count }}</strong> books in this category
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    {% if category.description %}
+                        <h5 style="color: var(--primary-color); margin-bottom: 15px;">
+                            <i class="fas fa-file-alt"></i> Description
+                        </h5>
+                        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 30px;">
+                            {{ category.description }}
+                        </p>
+                    {% endif %}
+
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <h5 style="color: var(--primary-color); margin-bottom: 15px;">
+                            <i class="fas fa-chart-pie"></i> Category Statistics
+                        </h5>
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <p style="color: #7f8c8d; margin-bottom: 5px;">Total Books</p>
+                                <p style="color: var(--accent-color); font-size: 2rem; font-weight: 700;">
+                                    {{ books.count }}
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p style="color: #7f8c8d; margin-bottom: 5px;">Unique Authors</p>
+                                <p style="color: var(--secondary-color); font-size: 2rem; font-weight: 700;">
+                                    {{ books.values_list|length }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'admin:mainapp_category_change' category.pk %}" class="btn btn-secondary">
+                        <i class="fas fa-edit"></i> Edit Category
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Books in Category -->
+    <div class="row">
+        <div class="col-12">
+            <h3 style="color: white; font-weight: 700; margin-bottom: 25px;">
+                <i class="fas fa-book"></i> Books in {{ category.name }}
+            </h3>
+            {% if books %}
+                <div class="row">
+                    {% for book in books %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card">
+                                <div class="book-cover">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ book.title }}</h5>
+                                    <div class="author-badge mb-3">
+                                        <i class="fas fa-pen-fancy"></i> {{ book.author.name }}
+                                    </div>
+
+                                    {% if book.description %}
+                                        <p class="card-text text-truncate-2" style="color: #555; font-size: 0.95rem; margin-bottom: 15px;">
+                                            {{ book.description }}
+                                        </p>
+                                    {% endif %}
+
+                                    <div class="tag-cloud">
+                                        {% for cat in book.categories.all %}
+                                            <span class="badge-custom">{{ cat.name }}</span>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="mt-3 d-flex justify-content-between align-items-center">
+                                        <small style="color: #7f8c8d;">
+                                            <i class="fas fa-calendar"></i> {{ book.published|date:"Y" }}
+                                        </small>
+                                        <a href="{% url 'book_detail' book.pk %}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-arrow-right"></i> View
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-inbox"></i>
+                    <p>No books in this category yet. <a href="{% url 'admin:index' %}">Add some books in the admin panel</a>.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
